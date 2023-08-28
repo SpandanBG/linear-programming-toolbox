@@ -1,5 +1,20 @@
 //! This feature module contains the algorithm to solve a Maximization and Minimization problem
 //! using the Simplex method.
+//!
+//! For given problem:
+//! - Maximize: `12x + 16y = 0`
+//! - Subjected To: 
+//!     - `10x + 20y <= 120`
+//!     - `8x + 8y <= 80`
+//!     - `x >=0 & y >= 0`
+//!
+//! The Simplex Tableau will look something like this
+//!
+//! | Basic Variables | x | y | s1 | s2 | RHS | Ratio |
+//! |---|---|---|---|---|---|---|
+//! | s1 | 10 | 20 | 1 | 0 | 120 |   |
+//! | s2 | 8 | 8 | 0 | 1 | 80 |   |
+//! | z | -12 | -16 | 0 | 0 |   |   |
 
 use crate::{
     coord::{Coord, NavDir},
@@ -63,6 +78,52 @@ pub struct SimplexTable {
 }
 
 impl SimplexTable {
+    /// Creates a new Simplex Tableau
+    ///
+    /// # Arguments
+    /// * `problem_type` - `ProblemType` describes wheather its MAX or MIN problem
+    /// * `objective_fn` - `Equation` equation describing the objective function
+    /// * `conditions` - `Vec<Equation>` a list of equations each describiting a condition the
+    /// objection function is subjected to
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use simplex_method_lp::{
+    ///     simplex::{ProblemType, SimplexTable},
+    ///     constants::EqType,
+    ///     equation::{DVar, Equation},
+    /// };
+    ///
+    /// // Maximize `12x + 16y = Z`
+    /// // Subjected to:
+    /// // - `10x + 12y <= 120`
+    /// // - `8x + 8y <= 80`
+    /// // - `x & y >= 0`
+    ///
+    /// // 12x + 16y - 0s1 - 0s2 = Z
+    /// let objective_fn = Equation::new(
+    ///     vec![DVar(12e0, 1), DVar(16e0, 2), DVar(-0e0, 3), DVar(-0e0, 4)],
+    ///     EqType::EQ,
+    ///     0e0,
+    /// );
+    /// let subjected_to = vec![
+    ///     // `10x + 20y + s1 + 0s2 <= 120`
+    ///     Equation::new(
+    ///         vec![DVar(10e0, 1), DVar(20e0, 2), DVar(1e0, 3), DVar(0e0, 4)],
+    ///         EqType::LTE,
+    ///         120e0,
+    ///     ),
+    ///     // `8x + 8y + 0s1 + s2 <= 80`
+    ///     Equation::new(
+    ///         vec![DVar(8e0, 1), DVar(8e0, 2), DVar(0e0, 3), DVar(1e0, 4)],
+    ///         EqType::LTE,
+    ///         80e0,
+    ///     ),
+    /// ];
+    ///
+    /// let simplex = SimplexTable::new(ProblemType::MAX, &objective_fn, &subjected_to);
+    /// ```
     pub fn new(
         problem_type: ProblemType,
         objective_fn: &Equation,
@@ -92,6 +153,51 @@ impl SimplexTable {
         }
     }
 
+    /// Move table to the next iteration state. Returns `false` if resolved
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use simplex_method_lp::{
+    ///     simplex::{ProblemType, SimplexTable},
+    ///     constants::EqType,
+    ///     equation::{DVar, Equation},
+    /// };
+    ///
+    /// // Maximize `12x + 16y = Z`
+    /// // Subjected to:
+    /// // - `10x + 12y <= 120`
+    /// // - `8x + 8y <= 80`
+    /// // - `x & y >= 0`
+    ///
+    /// // 12x + 16y - 0s1 - 0s2 = Z
+    /// let objective_fn = Equation::new(
+    ///     vec![DVar(12e0, 1), DVar(16e0, 2), DVar(-0e0, 3), DVar(-0e0, 4)],
+    ///     EqType::EQ,
+    ///     0e0,
+    /// );
+    /// let subjected_to = vec![
+    ///     // `10x + 20y + s1 + 0s2 <= 120`
+    ///     Equation::new(
+    ///         vec![DVar(10e0, 1), DVar(20e0, 2), DVar(1e0, 3), DVar(0e0, 4)],
+    ///         EqType::LTE,
+    ///         120e0,
+    ///     ),
+    ///     // `8x + 8y + 0s1 + s2 <= 80`
+    ///     Equation::new(
+    ///         vec![DVar(8e0, 1), DVar(8e0, 2), DVar(0e0, 3), DVar(1e0, 4)],
+    ///         EqType::LTE,
+    ///         80e0,
+    ///     ),
+    /// ];
+    ///
+    /// let mut simplex = SimplexTable::new(ProblemType::MAX, &objective_fn, &subjected_to);
+    ///
+    /// simplex.next(); // 1st Iter
+    /// simplex.next(); // 2nd Iter (resolves it)
+    ///
+    /// assert!(!simplex.next()); // Early return's with false for resolved tableau
+    /// ```
     pub fn next(&mut self) -> bool {
         if self.is_resolved {
             return false;
@@ -134,7 +240,6 @@ impl SimplexTable {
         }
         let last_idx = self.st_key_col.len() - 1;
         self.st_key_col[last_idx] = self.z[key_col];
-        // Key Column Index does not account for the +1 for RHS
         return key_col;
     }
 
@@ -155,7 +260,6 @@ impl SimplexTable {
         }
         let last_idx = self.st_key_row.len() - 1;
         self.st_key_row[last_idx] = self.rhs[key_row];
-        // Key Row Index does not account for the +1 for Z
         return key_row;
     }
 
@@ -278,13 +382,13 @@ mod simplex_tests {
         );
 
         let subjected_to = vec![
-            // `10x + 20y + s1 + 0s2 + 0a1 + 0a2 <= 120`
+            // `10x + 20y + s1 + 0s2 <= 120`
             Equation::new(
                 vec![DVar(10e0, 1), DVar(20e0, 2), DVar(1e0, 3), DVar(0e0, 4)],
                 EqType::LTE,
                 120e0,
             ),
-            // `8x + 8y + 0s1 + s2 + 0a1 + 0a2 <= 80`
+            // `8x + 8y + 0s1 + s2 <= 80`
             Equation::new(
                 vec![DVar(8e0, 1), DVar(8e0, 2), DVar(0e0, 3), DVar(1e0, 4)],
                 EqType::LTE,

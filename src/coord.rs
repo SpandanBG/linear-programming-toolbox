@@ -6,9 +6,8 @@
 //! ```
 //! use simplex_method_lp::coord::Coord;
 //!
-//! // In a 2x2 matrix, in a single 4 length array, the array index 3 will be
-//! // coord (1, 1):
-//! let coord = Coord::new(3, 2, 2);
+//! // coord (1, 1) in a 2x2 matrix
+//! let coord = Coord::new(1, 1, 2, 2);
 //!
 //! assert_eq!(coord.x, 1);
 //! assert_eq!(coord.y, 1);
@@ -66,7 +65,7 @@ impl Coord {
     /// use simplex_method_lp::coord::Coord;
     ///
     /// // In a 2x2 matrix: coord (1, 1);
-    /// let coord = Coord::new_raw(1, 1, 2, 2);
+    /// let coord = Coord::new(1, 1, 2, 2);
     ///
     /// assert_eq!(coord.x, 1);
     /// assert_eq!(coord.y, 1);
@@ -88,7 +87,7 @@ impl Coord {
     /// use simplex_method_lp::coord::Coord;
     ///
     /// // In a 2x2 matrix: coord (0, 1);
-    /// let coord = Coord::new_raw(0, 1, 2, 2);
+    /// let coord = Coord::new(0, 1, 2, 2);
     /// let idx = coord.to_index();
     ///
     /// assert_eq!(idx, 2);
@@ -105,13 +104,14 @@ impl Coord {
     /// # Example
     ///
     /// ```
-    /// use simplex_method_lp::coord::Coord;
+    /// use simplex_method_lp::coord::{Coord, NavDir};
     ///
     /// // A (1, 1) coordinate in a 2x2 matrix
-    /// let coord = Coord::new_raw(1, 1, 2, 2);
+    /// let coord = Coord::new(1, 1, 2, 2);
     ///
-    /// let nav_up_iter = coord.iter(NavDir::UP);
-    /// let next_up = nav_up_iter.next();
+    /// let mut nav_up_iter = coord.iter(NavDir::UP);
+    /// nav_up_iter.next();
+    /// let next_up = nav_up_iter.next().unwrap();
     ///
     /// assert_eq!(next_up.x, 1);
     /// assert_eq!(next_up.y, 0);
