@@ -1,8 +1,8 @@
 #[allow(dead_code, unused)]
 
-pub mod constants;
+mod coord;
+
 pub mod equation;
-pub mod coord;
 
 #[cfg(feature = "simplex")]
 pub mod simplex;

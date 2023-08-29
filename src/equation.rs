@@ -10,14 +10,30 @@
 //! # Example
 //!
 //! ```
-//! use lp_toolbox::constants::EqType;
-//! use lp_toolbox::equation::{Equation, DVar};
+//! use lp_toolbox::equation::{EqType, Equation, DVar};
 //! 
 //! // 4x + 2y = 6
 //! let eqn = Equation::new(vec![DVar(4e0, 1), DVar(2e0, 2)], EqType::EQ, 6e0);
 //! ```
 
-use crate::constants::EqType;
+#[derive(Debug, PartialEq)]
+/// Possible equality type in a given equation
+pub enum EqType {
+    /// Equal (rhs == lhs)
+    EQ = 1,
+
+    /// Greater Than (rhs > lhs)
+    GT = 2,
+
+    /// Greater Than or Equal To (rhs >= lhs)
+    GTE = 3,
+    
+    /// Less Than (rhs < lhs)
+    LT = 4,
+
+    /// Less Than or Equal To (rhs <= lhs)
+    LTE = 5
+}
 
 #[derive(Debug)]
 /// Represents a decision variable (`aMxM`)
@@ -48,14 +64,13 @@ impl Equation {
     /// # Arguments
     ///
     /// * `lhs` - `Vec<DVar>` which describes the LHS of your equation
-    /// * `eq_type` - `constants::EqType` which describes the equality type of your equation
+    /// * `eq_type` - `EqType` which describes the equality type of your equation
     /// * `rhs` - `f64` which describes RHS of your equation
     ///
     /// # Example
     ///
     /// ```
-    /// use lp_toolbox::constants::EqType;
-    /// use lp_toolbox::equation::{Equation, DVar};
+    /// use lp_toolbox::equation::{EqType, Equation, DVar};
     /// 
     /// // 1x + 2y = 3
     /// let eq = Equation::new(vec![DVar(1e0, 1), DVar(2e0, 1)], EqType::EQ, 3e0);
@@ -69,8 +84,7 @@ impl Equation {
     /// # Example
     ///
     /// ```
-    /// use lp_toolbox::constants::EqType;
-    /// use lp_toolbox::equation::{Equation, DVar};
+    /// use lp_toolbox::equation::{EqType, Equation, DVar};
     ///
     /// // 1x + 2y = 3
     /// let eq = Equation::new(vec![DVar(1e0, 1), DVar(2e0, 2)], EqType::EQ, 3e0);
@@ -92,8 +106,7 @@ impl Equation {
     /// # Example
     ///
     /// ```
-    /// use lp_toolbox::constants::EqType;
-    /// use lp_toolbox::equation::{Equation, DVar};
+    /// use lp_toolbox::equation::{EqType, Equation, DVar};
     ///
     /// // 1x + 2y = 3
     /// let eq = Equation::new(vec![DVar(1e0, 1), DVar(2e0, 2)], EqType::EQ, 3e0);

@@ -1,17 +1,17 @@
-//! This module containts the untility to using matrix like coordinates in a
-//! single array
-//!
-//! # Example
-//!
-//! ```
-//! use lp_toolbox::coord::Coord;
-//!
-//! // coord (1, 1) in a 2x2 matrix
-//! let coord = Coord::new(1, 1, 2, 2);
-//!
-//! assert_eq!(coord.x, 1);
-//! assert_eq!(coord.y, 1);
-//! ```
+// This module containts the untility to using matrix like coordinates in a
+// single array
+//
+// # Example
+//
+// ```
+// use lp_toolbox::coord::Coord;
+//
+// // coord (1, 1) in a 2x2 matrix
+// let coord = Coord::new(1, 1, 2, 2);
+//
+// assert_eq!(coord.x, 1);
+// assert_eq!(coord.y, 1);
+// ```
 
 #[derive(Debug, Clone)]
 /// Represents the coordinate in matrix of a fixed size
@@ -50,26 +50,26 @@ pub enum NavDir {
 pub struct CoordIter(Option<Coord>, NavDir);
 
 impl Coord {
-    /// Creates a new coord with x and y directly
-    ///
-    /// # Arguments
-    ///
-    /// * `x` - `usize` the x axis location
-    /// * `y` - `usize` the y axis location
-    /// * `width` - `usize` the width of the matrix
-    /// * `height` - `usize` the height of the matrix
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use lp_toolbox::coord::Coord;
-    ///
-    /// // In a 2x2 matrix: coord (1, 1);
-    /// let coord = Coord::new(1, 1, 2, 2);
-    ///
-    /// assert_eq!(coord.x, 1);
-    /// assert_eq!(coord.y, 1);
-    /// ```
+    // Creates a new coord with x and y directly
+    //
+    // # Arguments
+    //
+    // * `x` - `usize` the x axis location
+    // * `y` - `usize` the y axis location
+    // * `width` - `usize` the width of the matrix
+    // * `height` - `usize` the height of the matrix
+    //
+    // # Example
+    //
+    // ```
+    // use lp_toolbox::coord::Coord;
+    //
+    // // In a 2x2 matrix: coord (1, 1);
+    // let coord = Coord::new(1, 1, 2, 2);
+    //
+    // assert_eq!(coord.x, 1);
+    // assert_eq!(coord.y, 1);
+    // ```
     pub fn new(x: usize, y: usize, width: usize, height: usize) -> Coord {
         return Coord {
             x,
@@ -79,43 +79,43 @@ impl Coord {
         };
     }
 
-    /// Get the coordinate right the current one
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use lp_toolbox::coord::Coord;
-    ///
-    /// // In a 2x2 matrix: coord (0, 1);
-    /// let coord = Coord::new(0, 1, 2, 2);
-    /// let idx = coord.to_index();
-    ///
-    /// assert_eq!(idx, 2);
-    /// ```
+    // Get the coordinate right the current one
+    //
+    // # Example
+    //
+    // ```
+    // use lp_toolbox::coord::Coord;
+    //
+    // // In a 2x2 matrix: coord (0, 1);
+    // let coord = Coord::new(0, 1, 2, 2);
+    // let idx = coord.to_index();
+    //
+    // assert_eq!(idx, 2);
+    // ```
     pub fn to_index(&self) -> usize {
         return self.y * self.width + self.x;
     }
 
-    /// Create a coordinate iterator
-    ///
-    /// # Arguments
-    /// * `dir` - `NavDir` The direction the coordinate to iterate towards
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use lp_toolbox::coord::{Coord, NavDir};
-    ///
-    /// // A (1, 1) coordinate in a 2x2 matrix
-    /// let coord = Coord::new(1, 1, 2, 2);
-    ///
-    /// let mut nav_up_iter = coord.iter(NavDir::UP);
-    /// nav_up_iter.next();
-    /// let next_up = nav_up_iter.next().unwrap();
-    ///
-    /// assert_eq!(next_up.x, 1);
-    /// assert_eq!(next_up.y, 0);
-    /// ```
+    // Create a coordinate iterator
+    //
+    // # Arguments
+    // * `dir` - `NavDir` The direction the coordinate to iterate towards
+    //
+    // # Example
+    //
+    // ```
+    // use lp_toolbox::coord::{Coord, NavDir};
+    //
+    // // A (1, 1) coordinate in a 2x2 matrix
+    // let coord = Coord::new(1, 1, 2, 2);
+    //
+    // let mut nav_up_iter = coord.iter(NavDir::UP);
+    // nav_up_iter.next();
+    // let next_up = nav_up_iter.next().unwrap();
+    //
+    // assert_eq!(next_up.x, 1);
+    // assert_eq!(next_up.y, 0);
+    // ```
     pub fn iter(&self, dir: NavDir) -> CoordIter {
         return CoordIter(Some(self.clone()), dir);
     }

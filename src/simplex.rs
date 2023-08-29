@@ -3,7 +3,7 @@
 //!
 //! For given problem:
 //! - Maximize: `12x + 16y = 0`
-//! - Subjected To: 
+//! - Subjected To:
 //!     - `10x + 20y <= 120`
 //!     - `8x + 8y <= 80`
 //!     - `x >=0 & y >= 0`
@@ -91,8 +91,7 @@ impl SimplexTable {
     /// ```
     /// use lp_toolbox::{
     ///     simplex::{ProblemType, SimplexTable},
-    ///     constants::EqType,
-    ///     equation::{DVar, Equation},
+    ///     equation::{EqType, DVar, Equation},
     /// };
     ///
     /// // Maximize `12x + 16y = Z`
@@ -160,8 +159,7 @@ impl SimplexTable {
     /// ```
     /// use lp_toolbox::{
     ///     simplex::{ProblemType, SimplexTable},
-    ///     constants::EqType,
-    ///     equation::{DVar, Equation},
+    ///     equation::{EqType, DVar, Equation},
     /// };
     ///
     /// // Maximize `12x + 16y = Z`
@@ -355,16 +353,12 @@ impl SimplexTable {
         let st_width = st_table.len() / st_height;
         return (st_table, st_height, st_width);
     }
-
 }
 
 #[cfg(test)]
 mod simplex_tests {
     use super::{ProblemType, SimplexTable};
-    use crate::{
-        constants::EqType,
-        equation::{DVar, Equation},
-    };
+    use crate::equation::{DVar, EqType, Equation};
 
     /// Setups the basic maximization problem
     ///
