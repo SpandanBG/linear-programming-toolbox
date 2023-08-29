@@ -3,8 +3,8 @@
 //! # Example
 //!
 //! ```
-//! use simplex_method_lp::constants;
-//! use simplex_method_lp::equation::{DVar, Equation};
+//! use lp_toolbox::constants;
+//! use lp_toolbox::equation::{DVar, Equation};
 //! 
 //! let eq = Equation::new(vec![DVar(2e0, 1)], constants::EqType::LTE, 4e0);
 //! ```

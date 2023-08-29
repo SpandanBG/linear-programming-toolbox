@@ -89,7 +89,7 @@ impl SimplexTable {
     /// # Example
     ///
     /// ```
-    /// use simplex_method_lp::{
+    /// use lp_toolbox::{
     ///     simplex::{ProblemType, SimplexTable},
     ///     constants::EqType,
     ///     equation::{DVar, Equation},
@@ -158,7 +158,7 @@ impl SimplexTable {
     /// # Example
     ///
     /// ```
-    /// use simplex_method_lp::{
+    /// use lp_toolbox::{
     ///     simplex::{ProblemType, SimplexTable},
     ///     constants::EqType,
     ///     equation::{DVar, Equation},

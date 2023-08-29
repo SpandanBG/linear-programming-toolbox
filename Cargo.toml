@@ -1,5 +1,5 @@
 [package]
-name = "simplex_method_lp"
+name = "lp_toolbox"
 version = "0.1.0"
 edition = "2021"
 

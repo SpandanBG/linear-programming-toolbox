@@ -10,8 +10,8 @@
 //! # Example
 //!
 //! ```
-//! use simplex_method_lp::constants::EqType;
-//! use simplex_method_lp::equation::{Equation, DVar};
+//! use lp_toolbox::constants::EqType;
+//! use lp_toolbox::equation::{Equation, DVar};
 //! 
 //! // 4x + 2y = 6
 //! let eqn = Equation::new(vec![DVar(4e0, 1), DVar(2e0, 2)], EqType::EQ, 6e0);
@@ -54,8 +54,8 @@ impl Equation {
     /// # Example
     ///
     /// ```
-    /// use simplex_method_lp::constants::EqType;
-    /// use simplex_method_lp::equation::{Equation, DVar};
+    /// use lp_toolbox::constants::EqType;
+    /// use lp_toolbox::equation::{Equation, DVar};
     /// 
     /// // 1x + 2y = 3
     /// let eq = Equation::new(vec![DVar(1e0, 1), DVar(2e0, 1)], EqType::EQ, 3e0);
@@ -69,8 +69,8 @@ impl Equation {
     /// # Example
     ///
     /// ```
-    /// use simplex_method_lp::constants::EqType;
-    /// use simplex_method_lp::equation::{Equation, DVar};
+    /// use lp_toolbox::constants::EqType;
+    /// use lp_toolbox::equation::{Equation, DVar};
     ///
     /// // 1x + 2y = 3
     /// let eq = Equation::new(vec![DVar(1e0, 1), DVar(2e0, 2)], EqType::EQ, 3e0);
@@ -92,8 +92,8 @@ impl Equation {
     /// # Example
     ///
     /// ```
-    /// use simplex_method_lp::constants::EqType;
-    /// use simplex_method_lp::equation::{Equation, DVar};
+    /// use lp_toolbox::constants::EqType;
+    /// use lp_toolbox::equation::{Equation, DVar};
     ///
     /// // 1x + 2y = 3
     /// let eq = Equation::new(vec![DVar(1e0, 1), DVar(2e0, 2)], EqType::EQ, 3e0);

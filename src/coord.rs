@@ -4,7 +4,7 @@
 //! # Example
 //!
 //! ```
-//! use simplex_method_lp::coord::Coord;
+//! use lp_toolbox::coord::Coord;
 //!
 //! // coord (1, 1) in a 2x2 matrix
 //! let coord = Coord::new(1, 1, 2, 2);
@@ -62,7 +62,7 @@ impl Coord {
     /// # Example
     ///
     /// ```
-    /// use simplex_method_lp::coord::Coord;
+    /// use lp_toolbox::coord::Coord;
     ///
     /// // In a 2x2 matrix: coord (1, 1);
     /// let coord = Coord::new(1, 1, 2, 2);
@@ -84,7 +84,7 @@ impl Coord {
     /// # Example
     ///
     /// ```
-    /// use simplex_method_lp::coord::Coord;
+    /// use lp_toolbox::coord::Coord;
     ///
     /// // In a 2x2 matrix: coord (0, 1);
     /// let coord = Coord::new(0, 1, 2, 2);
@@ -104,7 +104,7 @@ impl Coord {
     /// # Example
     ///
     /// ```
-    /// use simplex_method_lp::coord::{Coord, NavDir};
+    /// use lp_toolbox::coord::{Coord, NavDir};
     ///
     /// // A (1, 1) coordinate in a 2x2 matrix
     /// let coord = Coord::new(1, 1, 2, 2);
