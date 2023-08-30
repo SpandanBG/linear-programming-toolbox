@@ -18,7 +18,7 @@
 
 use crate::{
     coord::{Coord, NavDir},
-    equation::Equation,
+    equation::{Equation, VarM},
 };
 
 #[derive(Debug, PartialEq)]
@@ -34,20 +34,11 @@ pub enum ProblemType {
 #[derive(Debug)]
 /// Represents the simplex table in a single iteration
 pub struct SimplexTable {
-    /// Iteration number while solving the simplex table
-    iteration_no: u64,
-
-    /// Problem type (maximization / minimization problem)
-    problem_type: ProblemType,
+    /// Key Element => The original value of the key element
+    st_key_elem: f64,
 
     /// Z => Coeff.s of Objective fn (`aM`)
     z: Vec<f64>,
-
-    /// Basic Variables => Variales of Objective fn (`xM`)
-    basic_var: Vec<u64>,
-
-    /// Entered Basic Variables => Variables who's values are at play
-    entered_basic_var: Vec<u64>,
 
     /// RHS => The solution (values) to the Entered Basic Variables
     rhs: Vec<f64>,
@@ -64,17 +55,26 @@ pub struct SimplexTable {
     /// Key Row => The original value of the key row
     st_key_row: Vec<f64>,
 
-    /// Key Element => The original value of the key element
-    st_key_elem: f64,
-
     /// Simplex Tableau Width
     st_width: usize,
 
     /// Simplex Tableau Height
     st_height: usize,
 
+    /// Iteration number while solving the simplex table
+    iteration_no: u64,
+
+    /// Problem type (maximization / minimization problem)
+    problem_type: ProblemType,
+
     /// Resolved => The simplex resolution is reached
     is_resolved: bool,
+
+    /// Basic Variables => Variales of Objective fn (`xM`)
+    basic_var: Vec<VarM>,
+
+    /// Entered Basic Variables => Variables who's values are at play
+    entered_basic_var: Vec<VarM>,
 }
 
 impl SimplexTable {
@@ -135,20 +135,20 @@ impl SimplexTable {
         let (st_table, st_height, st_width) = SimplexTable::get_soluton_table(&conditions);
 
         SimplexTable {
-            iteration_no: 0,
-            problem_type,
+            st_key_elem: 0e0,
             z,
-            basic_var,
-            entered_basic_var,
             rhs,
             ratio: vec![0e0; conditions.len()],
             st_table,
             st_key_col: vec![0e0; st_height + 1], // The +1 is for the z row's value
             st_key_row: vec![0e0; st_width + 1],  // The +1 is for the rhs col's value
-            st_key_elem: 0e0,
             st_height,
             st_width,
+            iteration_no: 0,
+            problem_type,
             is_resolved: false,
+            basic_var,
+            entered_basic_var,
         }
     }
 
@@ -309,29 +309,29 @@ impl SimplexTable {
     }
 
     fn update_entries(&mut self, key_col: usize, key_row: usize) {
-        self.entered_basic_var[key_row] = self.basic_var[key_col];
+        self.entered_basic_var[key_row] = self.basic_var[key_col].clone();
     }
 
-    fn get_z_and_basic_vars(objective_fn: &Equation) -> (Vec<f64>, Vec<u64>) {
+    fn get_z_and_basic_vars(objective_fn: &Equation) -> (Vec<f64>, Vec<VarM>) {
         let mut z = vec![];
         let mut basic_var = vec![];
 
         for d_var in objective_fn.iter() {
             z.push(-1e0 * d_var.0);
-            basic_var.push(d_var.1)
+            basic_var.push(d_var.1.clone())
         }
 
         return (z, basic_var);
     }
 
-    fn get_entered_basic_vars(z: &Vec<f64>, basic_var: &Vec<u64>, no_of_slacks: usize) -> Vec<u64> {
+    fn get_entered_basic_vars(z: &Vec<f64>, basic_var: &Vec<VarM>, no_of_slacks: usize) -> Vec<VarM> {
         let mut entered_basic_var = vec![];
 
         let end_idx = z.len();
         let start_idx = end_idx - no_of_slacks;
 
         for i in start_idx..end_idx {
-            entered_basic_var.push(basic_var[i]);
+            entered_basic_var.push(basic_var[i].clone());
         }
         return entered_basic_var;
     }
@@ -358,7 +358,7 @@ impl SimplexTable {
 #[cfg(test)]
 mod simplex_tests {
     use super::{ProblemType, SimplexTable};
-    use crate::equation::{DVar, EqType, Equation};
+    use crate::equation::{DVar, VarM, EqType, Equation};
 
     /// Setups the basic maximization problem
     ///
@@ -370,7 +370,7 @@ mod simplex_tests {
     fn setup_max_problem() -> (ProblemType, Equation, Vec<Equation>) {
         // `12x + 16y + 0s1 + 0s2`
         let objective_fn = Equation::new(
-            vec![DVar(12e0, 1), DVar(16e0, 2), DVar(-0e0, 3), DVar(-0e0, 4)],
+            vec![DVar(12e0, VarM('x', 1)), DVar(16e0, VarM('x', 2)), DVar(-0e0, VarM('x', 3)), DVar(-0e0, VarM('x', 4))],
             EqType::EQ,
             0e0,
         );
@@ -378,13 +378,13 @@ mod simplex_tests {
         let subjected_to = vec![
             // `10x + 20y + s1 + 0s2 <= 120`
             Equation::new(
-                vec![DVar(10e0, 1), DVar(20e0, 2), DVar(1e0, 3), DVar(0e0, 4)],
+                vec![DVar(10e0, VarM('x', 1)), DVar(20e0, VarM('x', 2)), DVar(1e0, VarM('x', 3)), DVar(0e0, VarM('x', 4))],
                 EqType::LTE,
                 120e0,
             ),
             // `8x + 8y + 0s1 + s2 <= 80`
             Equation::new(
-                vec![DVar(8e0, 1), DVar(8e0, 2), DVar(0e0, 3), DVar(1e0, 4)],
+                vec![DVar(8e0, VarM('x', 1)), DVar(8e0, VarM('x', 2)), DVar(0e0, VarM('x', 3)), DVar(1e0, VarM('x', 4))],
                 EqType::LTE,
                 80e0,
             ),
@@ -401,8 +401,8 @@ mod simplex_tests {
         assert_eq!(simplex.iteration_no, 0);
         assert_eq!(simplex.problem_type, ProblemType::MAX);
         assert_eq!(simplex.z, vec![-12e0, -16e0, 0e0, 0e0]);
-        assert_eq!(simplex.basic_var, vec![1, 2, 3, 4]);
-        assert_eq!(simplex.entered_basic_var, vec![3, 4]);
+        assert_eq!(simplex.basic_var, vec![VarM('x', 1), VarM('x', 2), VarM('x', 3), VarM('x', 4)]);
+        assert_eq!(simplex.entered_basic_var, vec![VarM('x', 3), VarM('x', 4)]);
         assert_eq!(simplex.rhs, vec![120e0, 80e0]);
         assert_eq!(simplex.ratio, vec![0e0, 0e0]);
         assert_eq!(
@@ -420,12 +420,12 @@ mod simplex_tests {
 
         simplex.next();
 
-        assert_eq!(simplex.entered_basic_var, vec![2, 4]);
+        assert_eq!(simplex.entered_basic_var, vec![VarM('x', 2), VarM('x', 4)]);
         assert_eq!(simplex.rhs, vec![6e0, 32e0]);
 
         simplex.next();
 
-        assert_eq!(simplex.entered_basic_var, vec![2, 1]);
+        assert_eq!(simplex.entered_basic_var, vec![VarM('x', 2), VarM('x', 1)]);
         assert_eq!(simplex.rhs, vec![2e0, 8e0]);
 
         assert!(!simplex.next());

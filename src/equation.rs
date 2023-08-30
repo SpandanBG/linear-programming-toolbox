@@ -35,13 +35,21 @@ pub enum EqType {
     LTE = 5
 }
 
+#[derive(Debug, PartialEq, Clone)]
+/// Represents a variable name (`xM`)
+///
+/// Each `xM` is represented by the struct `VarM(char, u32)`:
+/// - Here the `char` is the character `x`
+/// - And the `u32` is the number `M` 
+pub struct VarM(pub char, pub u32);
+
 #[derive(Debug)]
 /// Represents a decision variable (`aMxM`)
 ///
-/// Each `aMxM` is represented by the struct `DVar(f64, u32)`:
+/// Each `aMxM` is represented by the struct `DVar(f64, VarM)`:
 /// - Here the `f64` is the coefficent `aM`
-/// - And the u64 is an ID representing `xM`
-pub struct DVar(pub f64, pub u64);
+/// - And the `VarM` is an ID representing `xM`
+pub struct DVar(pub f64, pub VarM);
 
 #[derive(Debug)]
 /// Represents an equation (`a1x1 + a2x2 + ... + aNxN <= b1`)
@@ -135,14 +143,14 @@ impl<'a> Iterator for EquationIterator<'a> {
 
 #[cfg(test)]
 mod equation_tests {
-    use super::{DVar, Equation, EqType};
+    use super::{DVar, VarM, Equation, EqType};
 
     #[test]
     fn should_create_basic_equation() {
-        let eqn = Equation::new(vec![DVar(2e0, 1)], EqType::LTE, 4e0);
+        let eqn = Equation::new(vec![DVar(2e0, VarM('x', 1))], EqType::LTE, 4e0);
 
         assert_eq!(eqn.lhs[0].0,  2e0);
-        assert_eq!(eqn.lhs[0].1,  1);
+        assert_eq!(eqn.lhs[0].1,  VarM('x', 1));
         assert_eq!(eqn.rhs,  4e0);
         assert_eq!(eqn.eq_type, EqType::LTE);
     }
@@ -150,20 +158,20 @@ mod equation_tests {
 
 #[cfg(test)]
 mod equation_iterator_tests {
-    use super::{DVar, Equation, EqType};
+    use super::{DVar, VarM, Equation, EqType};
 
     #[test]
     fn should_iter_through_rhs() {
-        let eqn = Equation::new(vec![DVar(1e0, 1), DVar(2e0, 2)], EqType::EQ, 3e0);
+        let eqn = Equation::new(vec![DVar(1e0, VarM('x', 1)), DVar(2e0, VarM('x', 2))], EqType::EQ, 3e0);
 
         let mut eqn_iter = eqn.iter();
 
         let item = eqn_iter.next();
         assert_eq!(item.unwrap().0, 1e0);
-        assert_eq!(item.unwrap().1, 1);
+        assert_eq!(item.unwrap().1, VarM('x', 1));
 
         let item = eqn_iter.next();
         assert_eq!(item.unwrap().0, 2e0);
-        assert_eq!(item.unwrap().1, 2);
+        assert_eq!(item.unwrap().1, VarM('x', 2));
     }
 }
